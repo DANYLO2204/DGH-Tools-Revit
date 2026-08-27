@@ -10,7 +10,7 @@ namespace DghTools.Revit
 {
     internal static class UpdateManager
     {
-        public const string CurrentVersion = "0.8.0";
+        public const string CurrentVersion = "0.8.1";
         private const string ManifestUrl = "https://raw.githubusercontent.com/DANYLO2204/DGH-Tools-Revit/main/update/update.json";
         private const int CheckIntervalHours = 24;
 
@@ -41,18 +41,16 @@ namespace DghTools.Revit
                     return;
                 }
 
-                var psi = new ProcessStartInfo
-                {
-                    FileName = "powershell.exe",
-                    UseShellExecute = false,
-                    CreateNoWindow = true,
-                    WindowStyle = ProcessWindowStyle.Hidden,
-                    Arguments = "-NoProfile -ExecutionPolicy Bypass -File " + Quote(updater) +
+                ProcessStartInfo psi = new ProcessStartInfo();
+                psi.FileName = "powershell.exe";
+                psi.UseShellExecute = false;
+                psi.CreateNoWindow = true;
+                psi.WindowStyle = ProcessWindowStyle.Hidden;
+                psi.Arguments = "-NoProfile -ExecutionPolicy Bypass -File " + Quote(updater) +
                                 " -RevitPid " + Process.GetCurrentProcess().Id +
                                 " -StateDir " + Quote(stateDir) +
                                 " -PluginDir " + Quote(pluginDir) +
-                                " -Version " + Quote(pendingVersion)
-                };
+                                " -Version " + Quote(pendingVersion);
 
                 Process.Start(psi);
             }
@@ -66,7 +64,7 @@ namespace DghTools.Revit
 
             ServicePointManager.SecurityProtocol |= SecurityProtocolType.Tls12;
             string json = DownloadString(ManifestUrl + "?t=" + DateTime.UtcNow.Ticks);
-            var serializer = new JavaScriptSerializer();
+            JavaScriptSerializer serializer = new JavaScriptSerializer();
             UpdateManifest manifest = serializer.Deserialize<UpdateManifest>(json);
 
             if (manifest == null || !manifest.enabled) return;
@@ -122,8 +120,8 @@ namespace DghTools.Revit
 
         private static WebClient CreateClient()
         {
-            var client = new WebClient();
-            client.Headers[HttpRequestHeader.UserAgent] = "DGH-Tools-Revit-Updater/4.0";
+            WebClient client = new WebClient();
+            client.Headers[HttpRequestHeader.UserAgent] = "DGH-Tools-Revit-Updater/4.1";
             client.Headers[HttpRequestHeader.CacheControl] = "no-cache";
             return client;
         }
@@ -184,8 +182,15 @@ namespace DghTools.Revit
             catch { }
         }
 
-        private static string Quote(string value) { return "\"" + (value ?? "").Replace("\"", "\\\"") + "\""; }
-        private static void SafeDelete(string path) { try { if (File.Exists(path)) File.Delete(path); } catch { } }
+        private static string Quote(string value)
+        {
+            return "\"" + (value ?? "").Replace("\"", "\\\"") + "\"";
+        }
+
+        private static void SafeDelete(string path)
+        {
+            try { if (File.Exists(path)) File.Delete(path); } catch { }
+        }
 
         private static void Log(string text)
         {
