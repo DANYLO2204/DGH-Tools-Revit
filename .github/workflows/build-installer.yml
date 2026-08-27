@@ -5,6 +5,8 @@ on:
     branches: [ main ]
     paths:
       - 'installer/DghToolsInstaller.cs'
+      - 'installer/AssemblyInfo.cs'
+      - 'installer/GenerateInstallerIcon.ps1'
       - '.github/workflows/build-installer.yml'
   workflow_dispatch:
 
@@ -20,6 +22,12 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Generate DGH Tools icon
+        shell: powershell
+        run: |
+          powershell.exe -NoProfile -ExecutionPolicy Bypass -File "installer\GenerateInstallerIcon.ps1"
+          if (-not (Test-Path "installer\DGH_Tools.ico")) { throw "Installer icon was not generated" }
+
       - name: Build installer EXE
         shell: powershell
         run: |
@@ -27,13 +35,23 @@ jobs:
           $csc = "$env:WINDIR\Microsoft.NET\Framework64\v4.0.30319\csc.exe"
           if (-not (Test-Path $csc)) { throw "csc.exe not found" }
           & $csc /nologo /target:winexe /platform:x64 /optimize+ `
+            /win32icon:"installer\DGH_Tools.ico" `
             /out:"dist\DGH_Tools_Revit2023_Setup.exe" `
             /reference:System.Windows.Forms.dll `
             /reference:System.Drawing.dll `
             /reference:System.Web.Extensions.dll `
-            "installer\DghToolsInstaller.cs"
+            "installer\DghToolsInstaller.cs" `
+            "installer\AssemblyInfo.cs"
           if ($LASTEXITCODE -ne 0) { throw "Installer compilation failed" }
-          Get-Item "dist\DGH_Tools_Revit2023_Setup.exe" | Format-List Name,Length,LastWriteTime
+
+          $exe = Get-Item "dist\DGH_Tools_Revit2023_Setup.exe"
+          $info = $exe.VersionInfo
+          Write-Host "File:        $($exe.Name)"
+          Write-Host "Size:        $($exe.Length)"
+          Write-Host "Company:     $($info.CompanyName)"
+          Write-Host "Product:     $($info.ProductName)"
+          Write-Host "Description: $($info.FileDescription)"
+          Write-Host "Version:     $($info.FileVersion)"
 
       - name: Upload installer artifact
         uses: actions/upload-artifact@v4
