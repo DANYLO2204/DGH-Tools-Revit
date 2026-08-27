@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.7.1
+- Added DGH Tools publisher/company metadata to the Revit plugin assembly.
+- Added DGH Tools company/product metadata to the Windows installer.
+- Added an embedded DGH Tools installer icon.
+- Installer build now verifies Company, Product, Description and Version metadata.
+
 ## 0.7.0
 - Switched auto-update to a public GitHub `update.json` manifest.
 - Split the add-in into `App.cs`, `AlignGridEndsCommand.cs`, and `UpdateManager.cs`.
