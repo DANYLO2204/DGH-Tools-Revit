@@ -10,7 +10,7 @@ namespace DghTools.Revit
 {
     internal static class UpdateManager
     {
-        public const string CurrentVersion = "0.7.0";
+        public const string CurrentVersion = "0.7.1";
         private const string ManifestUrl = "https://raw.githubusercontent.com/DANYLO2204/DGH-Tools-Revit/main/update/update.json";
         private const int CheckIntervalHours = 24;
 
