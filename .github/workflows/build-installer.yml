@@ -28,6 +28,64 @@ jobs:
           powershell.exe -NoProfile -ExecutionPolicy Bypass -File "installer\GenerateInstallerIcon.ps1"
           if (-not (Test-Path "installer\DGH_Tools.ico")) { throw "Installer icon was not generated" }
 
+      - name: Patch plugin compiler WPF references
+        shell: powershell
+        run: |
+          $path = "installer\DghToolsInstaller.cs"
+          $src = Get-Content $path -Raw
+
+          $old1 = @'
+                string presentationCore = FindFrameworkDll("PresentationCore.dll");
+                string windowsBase = FindFrameworkDll("WindowsBase.dll");
+                string webExtensions = FindFrameworkDll("System.Web.Extensions.dll");
+                if (csc == null || presentationCore == null || windowsBase == null || webExtensions == null)
+                    throw new InvalidOperationException("Required .NET Framework 4.x compiler/reference files are missing.");
+
+                string newDll = Path.Combine(temp, "GridEndAligner.dll");
+                string arguments = BuildCompilerArguments(newDll, revitApi, revitApiUi, presentationCore, windowsBase, webExtensions, sourceFiles);
+'@
+
+          $new1 = @'
+                string presentationCore = FindFrameworkDll("PresentationCore.dll");
+                string presentationFramework = FindFrameworkDll("PresentationFramework.dll");
+                string windowsBase = FindFrameworkDll("WindowsBase.dll");
+                string systemXaml = FindFrameworkDll("System.Xaml.dll");
+                string webExtensions = FindFrameworkDll("System.Web.Extensions.dll");
+                if (csc == null || presentationCore == null || presentationFramework == null || windowsBase == null || systemXaml == null || webExtensions == null)
+                    throw new InvalidOperationException("Required .NET Framework/WPF compiler reference files are missing.");
+
+                string newDll = Path.Combine(temp, "GridEndAligner.dll");
+                string arguments = BuildCompilerArguments(newDll, revitApi, revitApiUi, presentationCore, presentationFramework, windowsBase, systemXaml, webExtensions, sourceFiles);
+'@
+
+          $old2 = 'private string BuildCompilerArguments(string output, string revitApi, string revitApiUi, string presentationCore, string windowsBase, string webExtensions, List<string> sources)'
+          $new2 = 'private string BuildCompilerArguments(string output, string revitApi, string revitApiUi, string presentationCore, string presentationFramework, string windowsBase, string systemXaml, string webExtensions, List<string> sources)'
+
+          $old3 = @'
+            b.Append("/reference:").Append(Quote(presentationCore)).Append(' ');
+            b.Append("/reference:").Append(Quote(windowsBase)).Append(' ');
+            b.Append("/reference:").Append(Quote(webExtensions)).Append(' ');
+'@
+
+          $new3 = @'
+            b.Append("/reference:").Append(Quote(presentationCore)).Append(' ');
+            b.Append("/reference:").Append(Quote(presentationFramework)).Append(' ');
+            b.Append("/reference:").Append(Quote(windowsBase)).Append(' ');
+            b.Append("/reference:").Append(Quote(systemXaml)).Append(' ');
+            b.Append("/reference:").Append(Quote(webExtensions)).Append(' ');
+'@
+
+          if (-not $src.Contains($old1)) { throw "Installer source patch block 1 was not found" }
+          if (-not $src.Contains($old2)) { throw "Installer source patch block 2 was not found" }
+          if (-not $src.Contains($old3)) { throw "Installer source patch block 3 was not found" }
+
+          $src = $src.Replace($old1, $new1)
+          $src = $src.Replace($old2, $new2)
+          $src = $src.Replace($old3, $new3)
+
+          [IO.File]::WriteAllText($path, $src, (New-Object Text.UTF8Encoding($false)))
+          Write-Host "Installer plugin compiler now references PresentationFramework.dll and System.Xaml.dll"
+
       - name: Build installer EXE
         shell: powershell
         run: |
