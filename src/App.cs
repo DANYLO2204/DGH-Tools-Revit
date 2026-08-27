@@ -3,6 +3,8 @@ using System;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Windows;
+using System.Windows.Media;
 using System.Windows.Media.Imaging;
 
 [assembly: AssemblyTitle("DGH Tools for Autodesk Revit 2023")]
@@ -10,9 +12,9 @@ using System.Windows.Media.Imaging;
 [assembly: AssemblyCompany("DGH Tools")]
 [assembly: AssemblyProduct("DGH Tools for Autodesk Revit")]
 [assembly: AssemblyCopyright("Copyright © DGH Tools 2026")]
-[assembly: AssemblyVersion("0.8.0.0")]
-[assembly: AssemblyFileVersion("0.8.0.0")]
-[assembly: AssemblyInformationalVersion("0.8.0")]
+[assembly: AssemblyVersion("0.8.1.0")]
+[assembly: AssemblyFileVersion("0.8.1.0")]
+[assembly: AssemblyInformationalVersion("0.8.1")]
 
 namespace DghTools.Revit
 {
@@ -20,9 +22,6 @@ namespace DghTools.Revit
     {
         private const string TabName = "DGH Tools";
         private const string PanelName = "Grids";
-
-        private const string GridElbow16 = "iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAB50lEQVR4nJWTPWvTURTGf8+9+Seh1aiVqlNCoSCIixiyiPRT6AewurgUN9Eh+W8Kheg3qKPNUsRBcKmj74q2glRBKaW0hNhWS9Im9zgEmzQvg2c853cO93nuOaI3zDS1iP/9Fb1do0Ws0Md0cb1Z9YFFcwO6D7hOg5mQ7Ox9O1o/wg0CJ1o7PFq9o5V/tW5usmiZ/dNc00GyhLJpjinDM5+iEBpgYpsGUz9u8ZEiooRRQrnjZIh47kfJO4CpEp5YgRTTLk3BahTqvzgl449EmSJimbbmWMEc112SfLPKpV59Y7YHu+ssr9/VpjWpGjhiBc5hHbmMWQNL7vDZAbyAACYfMYeopSf4livbayU5ryQT2Qc2DcBiW673zOHZao7zpWNi0RyxQm7WLjDCPZpcpsWuIk6GJvVEnTPfb2uLefNcVSs7axfdCAuHv63L7cmHltmL8GrwFJGPxPjKjLYxEyCkkCvbk8MeSEbRHGZuZUbbP2+qhtgnBO9HuzyANkdI9y9JrIAUmDePmXBEJAbsUqyAd25ApR1XKhWQzH96/D7xYc75d5X2CwSU2guYWKq8SQwbsLGxJAC/9qpqUVJEqU5xuSIAt/pyc+iAA7GpTAInoP+mLJWJhkroUC3DBh8k1hp0af8XfwGupMZH9e+iHgAAAABJRU5ErkJggg==";
-        private const string GridElbow32 = "iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAC10lEQVR4nO2XzWtUZxTGf+d958uo8QNRKDW3SkCooovSLNyk6N+QfuwK0koLxbqti8ldSUGYUUSsi2KXzfwDhS6aWYhgsZoWQxFtqUgI2iHGj3RGc9/HxcwkcT6sSROoMM/yPj8Ozz3ve87lGq2SbHgc//gmdnWKhNhCG7MWXIO2tkd5ubXkFgHJMNOer7WxuoFPCGxJHvHd3a/sVtNbC84W4FFsIMcm6+cHn2Uo1EDGQ2oM/3WcCfIYo2hVudiCAxgexRNbIMsRl2NIMwxVH7DdxBMzCuQxJrHh8S5c4AmOU2Ba4AByfOpfwgG0nttWPYW5aSanT9h9zVMROGILvI1auUzg9+kTdl8JFYmtAAtcbEHCQpXkZZwDKEMAmU9zEWMmt4vbUUE/W4Z9lmHXQFFHABivH1eTq/Xxa1TUJbeefcBJgHfewJffI4kK+tj18aE5fDXDRHRGE27DIsfepR2ILZDH/vzCbuoxh3FM4NmrKhUCO4Gzu9exsRzbPCVckxP0uXUcDLN8dOdLK5GXuzpFgpkEn/k0B5J/qODYYR6bn+WDJsf7lnSYmsWxGTyt/oFz2hIVdCkqqjZ4Wv0LzJg8QFTUj1FBNbPGeEnWHLO3ivopKujp4AW9ufsbbeo2hi/eATM1Crlbx+zhnc9tBuMZIXi/fskduIEahbIQ/MC32ty6YAQOBbdtM5U/jtoskmNMvpVrXx6xBcwCY/JIhiNNqsOOiS3g8HhHLqG9nY4UKcffNdKNzqpT2ztUrmukVAIz+d++v5a6ftH5X0r1DhiMTJYM4FW8zOVSwEy070QAUt0C3Lt3o15o6kpF6YyRzv5nb1kBmlK2P1Xvk1bNW6quR7BYKRHqUmSl3rICrLF6AXoBegF6AV6HABJSl5+JlXrLCmBZl866pDbX4YO6Uu8VApTLowmAmTufPJs/tD/77lyjsFbq/dur/k+VzztGxvyqej0t0XNN+NZH6YEFMwAAAABJRU5ErkJggg==";
 
         public Result OnStartup(UIControlledApplication application)
         {
@@ -36,8 +35,8 @@ namespace DghTools.Revit
             string dir = Path.GetDirectoryName(assemblyPath);
             string assetsDir = Path.Combine(dir, "Assets");
 
-            EnsureEmbeddedAsset(Path.Combine(assetsDir, "AddGridElbows_16.png"), GridElbow16);
-            EnsureEmbeddedAsset(Path.Combine(assetsDir, "AddGridElbows_32.png"), GridElbow32);
+            EnsureGridElbowIcon(Path.Combine(assetsDir, "AddGridElbows_16.png"), 16);
+            EnsureGridElbowIcon(Path.Combine(assetsDir, "AddGridElbows_32.png"), 32);
 
             var alignData = new PushButtonData(
                 "DghTools.AlignGridEnds",
@@ -79,33 +78,80 @@ namespace DghTools.Revit
             return Result.Succeeded;
         }
 
-        private static void EnsureEmbeddedAsset(string path, string base64)
-        {
-            try
-            {
-                string folder = Path.GetDirectoryName(path);
-                if (!Directory.Exists(folder))
-                    Directory.CreateDirectory(folder);
-
-                File.WriteAllBytes(path, Convert.FromBase64String(base64));
-            }
-            catch { }
-        }
-
-        private static BitmapImage LoadImage(string path)
+        private static ImageSource LoadImage(string path)
         {
             try
             {
                 if (!File.Exists(path)) return null;
-                var image = new BitmapImage();
-                image.BeginInit();
-                image.CacheOption = BitmapCacheOption.OnLoad;
-                image.UriSource = new Uri(path, UriKind.Absolute);
-                image.EndInit();
-                image.Freeze();
-                return image;
+
+                using (FileStream stream = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+                {
+                    BitmapDecoder decoder = BitmapDecoder.Create(
+                        stream,
+                        BitmapCreateOptions.PreservePixelFormat,
+                        BitmapCacheOption.OnLoad);
+
+                    BitmapFrame frame = decoder.Frames[0];
+                    frame.Freeze();
+                    return frame;
+                }
             }
             catch { return null; }
+        }
+
+        private static void EnsureGridElbowIcon(string path, int size)
+        {
+            try
+            {
+                if (File.Exists(path)) return;
+
+                string folder = Path.GetDirectoryName(path);
+                if (!Directory.Exists(folder)) Directory.CreateDirectory(folder);
+
+                DrawingVisual visual = new DrawingVisual();
+                using (DrawingContext dc = visual.RenderOpen())
+                {
+                    double k = size / 32.0;
+                    Pen gridPen = new Pen(new SolidColorBrush(Color.FromRgb(36, 82, 126)), 1.8 * k);
+                    Pen accentPen = new Pen(new SolidColorBrush(Color.FromRgb(31, 144, 255)), 2.0 * k);
+                    Brush accentBrush = new SolidColorBrush(Color.FromRgb(31, 144, 255));
+
+                    gridPen.Freeze();
+                    accentPen.Freeze();
+                    accentBrush.Freeze();
+
+                    double[] x = new double[] { 8 * k, 16 * k, 24 * k };
+                    for (int i = 0; i < x.Length; i++)
+                    {
+                        dc.DrawLine(gridPen, new Point(x[i], 10 * k), new Point(x[i], 28 * k));
+                    }
+
+                    dc.DrawLine(accentPen, new Point(8 * k, 10 * k), new Point(8 * k, 7 * k));
+                    dc.DrawLine(accentPen, new Point(8 * k, 7 * k), new Point(5 * k, 7 * k));
+                    dc.DrawEllipse(null, accentPen, new Point(4 * k, 7 * k), 2.7 * k, 2.7 * k);
+
+                    dc.DrawLine(accentPen, new Point(16 * k, 10 * k), new Point(16 * k, 7 * k));
+                    dc.DrawEllipse(null, accentPen, new Point(16 * k, 7 * k), 2.7 * k, 2.7 * k);
+
+                    dc.DrawLine(accentPen, new Point(24 * k, 10 * k), new Point(24 * k, 7 * k));
+                    dc.DrawLine(accentPen, new Point(24 * k, 7 * k), new Point(27 * k, 7 * k));
+                    dc.DrawEllipse(null, accentPen, new Point(28 * k, 7 * k), 2.7 * k, 2.7 * k);
+
+                    dc.DrawEllipse(accentBrush, null, new Point(8 * k, 28 * k), 1.8 * k, 1.8 * k);
+                    dc.DrawEllipse(accentBrush, null, new Point(16 * k, 28 * k), 1.8 * k, 1.8 * k);
+                    dc.DrawEllipse(accentBrush, null, new Point(24 * k, 28 * k), 1.8 * k, 1.8 * k);
+                }
+
+                RenderTargetBitmap bitmap = new RenderTargetBitmap(size, size, 96, 96, PixelFormats.Pbgra32);
+                bitmap.Render(visual);
+
+                PngBitmapEncoder encoder = new PngBitmapEncoder();
+                encoder.Frames.Add(BitmapFrame.Create(bitmap));
+
+                using (FileStream stream = new FileStream(path, FileMode.Create, FileAccess.Write, FileShare.None))
+                    encoder.Save(stream);
+            }
+            catch { }
         }
     }
 }
