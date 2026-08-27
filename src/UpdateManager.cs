@@ -10,7 +10,7 @@ namespace DghTools.Revit
 {
     internal static class UpdateManager
     {
-        public const string CurrentVersion = "0.7.1";
+        public const string CurrentVersion = "0.8.0";
         private const string ManifestUrl = "https://raw.githubusercontent.com/DANYLO2204/DGH-Tools-Revit/main/update/update.json";
         private const int CheckIntervalHours = 24;
 
@@ -65,7 +65,7 @@ namespace DghTools.Revit
             WriteLastCheckNow();
 
             ServicePointManager.SecurityProtocol |= SecurityProtocolType.Tls12;
-            string json = DownloadString(ManifestUrl);
+            string json = DownloadString(ManifestUrl + "?t=" + DateTime.UtcNow.Ticks);
             var serializer = new JavaScriptSerializer();
             UpdateManifest manifest = serializer.Deserialize<UpdateManifest>(json);
 
@@ -86,7 +86,7 @@ namespace DghTools.Revit
                 string destination = Path.Combine(stateDir, "pending-" + safeName);
                 string temp = destination + ".part";
                 SafeDelete(temp);
-                DownloadFile(file.url, temp);
+                DownloadFile(AddCacheBuster(file.url), temp);
                 SafeDelete(destination);
                 File.Move(temp, destination);
             }
@@ -96,13 +96,18 @@ namespace DghTools.Revit
                 string updaterTemp = Path.Combine(stateDir, "pending-ApplyUpdate.ps1.part");
                 string updaterFinal = Path.Combine(stateDir, "pending-ApplyUpdate.ps1");
                 SafeDelete(updaterTemp);
-                DownloadFile(manifest.updater_url, updaterTemp);
+                DownloadFile(AddCacheBuster(manifest.updater_url), updaterTemp);
                 SafeDelete(updaterFinal);
                 File.Move(updaterTemp, updaterFinal);
             }
 
             File.WriteAllText(Path.Combine(stateDir, "pending-version.txt"), NormalizeVersion(manifest.version));
             Log("Queued update " + manifest.version + ".");
+        }
+
+        private static string AddCacheBuster(string url)
+        {
+            return url + (url.Contains("?") ? "&" : "?") + "t=" + DateTime.UtcNow.Ticks;
         }
 
         private static string DownloadString(string url)
@@ -118,7 +123,7 @@ namespace DghTools.Revit
         private static WebClient CreateClient()
         {
             var client = new WebClient();
-            client.Headers[HttpRequestHeader.UserAgent] = "DGH-Tools-Revit-Updater/3.0";
+            client.Headers[HttpRequestHeader.UserAgent] = "DGH-Tools-Revit-Updater/4.0";
             client.Headers[HttpRequestHeader.CacheControl] = "no-cache";
             return client;
         }
