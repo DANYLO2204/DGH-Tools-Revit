@@ -10,7 +10,7 @@ namespace DghTools.Revit
 {
     internal static class UpdateManager
     {
-        public const string CurrentVersion = "0.8.1";
+        public const string CurrentVersion = "0.8.2";
         private const string ManifestUrl = "https://raw.githubusercontent.com/DANYLO2204/DGH-Tools-Revit/main/update/update.json";
         private const int CheckIntervalHours = 24;
 
@@ -121,7 +121,7 @@ namespace DghTools.Revit
         private static WebClient CreateClient()
         {
             WebClient client = new WebClient();
-            client.Headers[HttpRequestHeader.UserAgent] = "DGH-Tools-Revit-Updater/4.1";
+            client.Headers[HttpRequestHeader.UserAgent] = "DGH-Tools-Revit-Updater/4.2";
             client.Headers[HttpRequestHeader.CacheControl] = "no-cache";
             return client;
         }
