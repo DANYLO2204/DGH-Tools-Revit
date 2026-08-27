@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.8.1
+- Fixed plugin compilation on Revit 2023/.NET Framework where `BitmapImage.UriSource` required an unreferenced `PresentationFramework.dll`.
+- Ribbon PNG loading now uses `BitmapDecoder`/`BitmapFrame`, avoiding the `IUriContext` dependency that caused the installer error.
+- Removed the invalid assignment to read-only `Leader.Anchor` in **Add Grid Elbows**.
+- Grid bubble movement now adjusts `Leader.Elbow` and lets Revit calculate the bubble anchor, with repeated `SetLeader` calls to compensate for Revit's datum-leader offset behavior.
+- External updater now references `PresentationFramework.dll` as an additional safeguard for future WPF code.
+
 ## 0.8.0
 - Added **Add Grid Elbows** (beta) to `DGH Tools -> Grids`.
 - Automatically groups selected straight grids by direction.
