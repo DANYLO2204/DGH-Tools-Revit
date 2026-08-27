@@ -4,12 +4,12 @@ on:
   push:
     branches: [ main ]
     paths:
-      - 'installer/**'
+      - 'installer/DghToolsInstaller.cs'
       - '.github/workflows/build-installer.yml'
   workflow_dispatch:
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
   build:
@@ -17,6 +17,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Build installer EXE
         shell: powershell
@@ -33,10 +35,26 @@ jobs:
           if ($LASTEXITCODE -ne 0) { throw "Installer compilation failed" }
           Get-Item "dist\DGH_Tools_Revit2023_Setup.exe" | Format-List Name,Length,LastWriteTime
 
-      - name: Upload installer
+      - name: Upload installer artifact
         uses: actions/upload-artifact@v4
         with:
           name: DGH_Tools_Revit2023_Setup
           path: dist/DGH_Tools_Revit2023_Setup.exe
           if-no-files-found: error
           retention-days: 90
+
+      - name: Publish permanent installer in repository
+        shell: powershell
+        run: |
+          New-Item -ItemType Directory -Path installer\bin -Force | Out-Null
+          Copy-Item "dist\DGH_Tools_Revit2023_Setup.exe" "installer\bin\DGH_Tools_Revit2023_Setup.exe" -Force
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add installer/bin/DGH_Tools_Revit2023_Setup.exe
+          git diff --cached --quiet
+          if ($LASTEXITCODE -ne 0) {
+            git commit -m "Update permanent GUI installer"
+            git push
+          } else {
+            Write-Host "Installer binary is already current."
+          }
