@@ -61,10 +61,12 @@ function Find-Dll([string]$Name) {
 $presentationCore = Find-Dll "PresentationCore.dll"
 $presentationFramework = Find-Dll "PresentationFramework.dll"
 $windowsBase = Find-Dll "WindowsBase.dll"
+$systemXaml = Find-Dll "System.Xaml.dll"
 $webExtensions = Find-Dll "System.Web.Extensions.dll"
 if (-not $presentationCore) { Fail "PresentationCore.dll not found." }
 if (-not $presentationFramework) { Fail "PresentationFramework.dll not found." }
 if (-not $windowsBase) { Fail "WindowsBase.dll not found." }
+if (-not $systemXaml) { Fail "System.Xaml.dll not found." }
 if (-not $webExtensions) { Fail "System.Web.Extensions.dll not found." }
 
 $temp = Join-Path $env:TEMP ("DGH_Update_" + [Guid]::NewGuid().ToString("N"))
@@ -75,7 +77,7 @@ $args = @(
     "/nologo", "/target:library", "/platform:x64", "/optimize+", "/out:$newDll",
     "/reference:$revitApi", "/reference:$revitApiUI",
     "/reference:$presentationCore", "/reference:$presentationFramework",
-    "/reference:$windowsBase", "/reference:$webExtensions"
+    "/reference:$windowsBase", "/reference:$systemXaml", "/reference:$webExtensions"
 ) + $sourceFiles
 
 Log "Compiling downloaded source..."
