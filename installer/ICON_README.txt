@@ -1,0 +1,1 @@
+DGH_Tools.ico is the embedded Windows application icon for the DGH Tools Revit 2023 installer. It is generated as a multi-size ICO and compiled into the setup executable via /win32icon.
