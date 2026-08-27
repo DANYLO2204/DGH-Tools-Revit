@@ -1,0 +1,1 @@
+Installer icon visual: dark navy rounded-square DGH Tools mark with three white Revit-style grid lines, blue datum bubbles, and a blue aligned baseline. The binary ICO is embedded in the setup executable.
