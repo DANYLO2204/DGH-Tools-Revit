@@ -72,7 +72,9 @@ jobs:
           git diff --cached --quiet
           if ($LASTEXITCODE -ne 0) {
             git commit -m "Update permanent GUI installer"
-            git push
+            git fetch origin main
+            git rebase origin/main
+            git push origin HEAD:main
           } else {
             Write-Host "Installer binary is already current."
           }
