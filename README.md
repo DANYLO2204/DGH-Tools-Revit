@@ -2,9 +2,10 @@
 
 DGH Tools is a lightweight Revit 2023 add-in focused on fast datum/grid editing workflows.
 
-## Current tool
+## Current tools
 
 - **Align Grid Ends** — align one end of multiple parallel straight grids in the active view using 2D/View Specific extents.
+- **Add Grid Elbows** *(beta)* — detects selected grid bubbles that are too close, adds/repositions grid leaders only where spacing is required, and keeps moved bubble centers on a common annotation line. Spacing is scale-aware (10 mm on paper in v0.8.0).
 
 ## Publisher
 
@@ -24,4 +25,6 @@ The installer has an embedded DGH Tools application icon and Windows file metada
 
 Installed builds check `update/update.json` from this repository in the background. A newer source version is downloaded and compiled against the local Revit 2023 API after Revit closes, becoming active on the next launch.
 
-Current plugin version: **0.7.1**
+Starting with v0.8.0, the updater compiles every downloaded `pending-*.cs` file, so future tools can be split into additional source files without another updater migration.
+
+Current plugin version: **0.8.0**
