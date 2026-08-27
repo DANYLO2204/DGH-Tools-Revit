@@ -1,0 +1,20 @@
+{
+  "enabled": true,
+  "version": "0.7.0",
+  "revit": "2023",
+  "files": [
+    {
+      "name": "App.cs",
+      "url": "https://raw.githubusercontent.com/DANYLO2204/DGH-Tools-Revit/main/src/App.cs"
+    },
+    {
+      "name": "AlignGridEndsCommand.cs",
+      "url": "https://raw.githubusercontent.com/DANYLO2204/DGH-Tools-Revit/main/src/AlignGridEndsCommand.cs"
+    },
+    {
+      "name": "UpdateManager.cs",
+      "url": "https://raw.githubusercontent.com/DANYLO2204/DGH-Tools-Revit/main/src/UpdateManager.cs"
+    }
+  ],
+  "updater_url": "https://raw.githubusercontent.com/DANYLO2204/DGH-Tools-Revit/main/tools/ApplyUpdate.ps1"
+}
