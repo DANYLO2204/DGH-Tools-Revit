@@ -22,12 +22,21 @@ for ($i = 0; $i -lt 600; $i++) {
 if (Get-Process -Id $RevitPid -ErrorAction SilentlyContinue) { Fail "Timed out waiting for Revit to close." }
 Start-Sleep -Milliseconds 800
 
+# v0.8+ compiles every pending C# file, so future commands can be split
+# into new source files without another updater migration.
 $sourceFiles = @(
-    (Join-Path $StateDir "pending-App.cs"),
-    (Join-Path $StateDir "pending-AlignGridEndsCommand.cs"),
-    (Join-Path $StateDir "pending-UpdateManager.cs")
+    Get-ChildItem $StateDir -Filter "pending-*.cs" -File -ErrorAction SilentlyContinue |
+        Sort-Object Name |
+        ForEach-Object { $_.FullName }
 )
-foreach ($f in $sourceFiles) { if (-not (Test-Path $f)) { Fail "Missing pending source: $f" } }
+
+if ($sourceFiles.Count -lt 3) {
+    Fail "Not enough pending C# source files were downloaded."
+}
+
+foreach ($f in $sourceFiles) {
+    if (-not (Test-Path $f)) { Fail "Missing pending source: $f" }
+}
 
 $revitDir = Join-Path $env:ProgramFiles "Autodesk\Revit 2023"
 $revitApi = Join-Path $revitDir "RevitAPI.dll"
