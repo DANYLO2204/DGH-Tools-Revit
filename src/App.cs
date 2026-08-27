@@ -10,9 +10,9 @@ using System.Windows.Media.Imaging;
 [assembly: AssemblyCompany("DGH Tools")]
 [assembly: AssemblyProduct("DGH Tools for Autodesk Revit")]
 [assembly: AssemblyCopyright("Copyright © DGH Tools 2026")]
-[assembly: AssemblyVersion("0.7.0.0")]
-[assembly: AssemblyFileVersion("0.7.0.0")]
-[assembly: AssemblyInformationalVersion("0.7.0")]
+[assembly: AssemblyVersion("0.7.1.0")]
+[assembly: AssemblyFileVersion("0.7.1.0")]
+[assembly: AssemblyInformationalVersion("0.7.1")]
 
 namespace DghTools.Revit
 {
