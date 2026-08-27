@@ -22,21 +22,14 @@ for ($i = 0; $i -lt 600; $i++) {
 if (Get-Process -Id $RevitPid -ErrorAction SilentlyContinue) { Fail "Timed out waiting for Revit to close." }
 Start-Sleep -Milliseconds 800
 
-# v0.8+ compiles every pending C# file, so future commands can be split
-# into new source files without another updater migration.
 $sourceFiles = @(
     Get-ChildItem $StateDir -Filter "pending-*.cs" -File -ErrorAction SilentlyContinue |
         Sort-Object Name |
         ForEach-Object { $_.FullName }
 )
 
-if ($sourceFiles.Count -lt 3) {
-    Fail "Not enough pending C# source files were downloaded."
-}
-
-foreach ($f in $sourceFiles) {
-    if (-not (Test-Path $f)) { Fail "Missing pending source: $f" }
-}
+if ($sourceFiles.Count -lt 3) { Fail "Not enough pending C# source files were downloaded." }
+foreach ($f in $sourceFiles) { if (-not (Test-Path $f)) { Fail "Missing pending source: $f" } }
 
 $revitDir = Join-Path $env:ProgramFiles "Autodesk\Revit 2023"
 $revitApi = Join-Path $revitDir "RevitAPI.dll"
@@ -64,10 +57,13 @@ function Find-Dll([string]$Name) {
     }
     return $null
 }
+
 $presentationCore = Find-Dll "PresentationCore.dll"
+$presentationFramework = Find-Dll "PresentationFramework.dll"
 $windowsBase = Find-Dll "WindowsBase.dll"
 $webExtensions = Find-Dll "System.Web.Extensions.dll"
 if (-not $presentationCore) { Fail "PresentationCore.dll not found." }
+if (-not $presentationFramework) { Fail "PresentationFramework.dll not found." }
 if (-not $windowsBase) { Fail "WindowsBase.dll not found." }
 if (-not $webExtensions) { Fail "System.Web.Extensions.dll not found." }
 
@@ -78,7 +74,8 @@ $newDll = Join-Path $temp "GridEndAligner.dll"
 $args = @(
     "/nologo", "/target:library", "/platform:x64", "/optimize+", "/out:$newDll",
     "/reference:$revitApi", "/reference:$revitApiUI",
-    "/reference:$presentationCore", "/reference:$windowsBase", "/reference:$webExtensions"
+    "/reference:$presentationCore", "/reference:$presentationFramework",
+    "/reference:$windowsBase", "/reference:$webExtensions"
 ) + $sourceFiles
 
 Log "Compiling downloaded source..."
