@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.8.2
+- Reworked ribbon PNG loading to use `BitmapFrame.Create(Stream, ...)`, removing the `BitmapImage`/`IUriContext` compile dependency that still affected the GUI installer.
+- Published plugin assembly version `0.8.2.0`.
+- External updater now includes full WPF compiler references (`PresentationCore`, `PresentationFramework`, `WindowsBase`, `System.Xaml`) for future updates.
+- Rebuilt the permanent GUI installer as version `1.0.1.0`.
+
 ## 0.8.1
 - Fixed plugin compilation on Revit 2023/.NET Framework where `BitmapImage.UriSource` required an unreferenced `PresentationFramework.dll`.
 - Ribbon PNG loading now uses `BitmapDecoder`/`BitmapFrame`, avoiding the `IUriContext` dependency that caused the installer error.
