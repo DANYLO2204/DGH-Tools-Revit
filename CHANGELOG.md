@@ -1,5 +1,16 @@
 # Changelog
 
+## 0.8.0
+- Added **Add Grid Elbows** (beta) to `DGH Tools -> Grids`.
+- Automatically groups selected straight grids by direction.
+- Processes visible bubbles on both physical sides of each grid group.
+- Detects clashes using a scale-aware minimum spacing of 10 mm on paper.
+- Uses a least-squares minimum-spacing layout so clashing bubbles spread symmetrically instead of drifting to one side.
+- Moved bubble centers stay on one common annotation line; leaders use an L-shaped elbow back to the grid.
+- Existing leaders are repositioned when they still require an offset; successful runs remain silent.
+- Added a dedicated Add Grid Elbows ribbon icon embedded in the plugin source.
+- Updated the external updater so future releases can compile any number of downloaded C# source files.
+
 ## 0.7.1
 - Added DGH Tools publisher/company metadata to the Revit plugin assembly.
 - Added DGH Tools company/product metadata to the Windows installer.
